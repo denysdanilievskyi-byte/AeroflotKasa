@@ -1,5 +1,4 @@
-﻿
-using AeroflotKasa.Models;
+﻿namespace AeroflotKasa.Models;
 
 /// <summary>
 /// Представляє рейс у касі аерофлоту.
