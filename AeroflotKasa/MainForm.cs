@@ -117,4 +117,26 @@ public partial class MainForm : Form
         dgvFlights.DataSource = null;
         dgvFlights.DataSource = flights.ToList();
     }
+
+    private void BtnSearch_Click(object? sender, EventArgs e)
+    {
+        var destination = txtSearch.Text.Trim();
+        if (string.IsNullOrWhiteSpace(destination))
+        {
+            MessageBox.Show("Будь ласка, введіть пункт призначення для пошуку.", "Увага", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+            return;
+        }
+
+        var nearestFlights = _flightService.FindNearestFlights(destination);
+        if (nearestFlights.Any())
+        {
+            RefreshGrid(nearestFlights);
+            MessageBox.Show($"Знайдено {nearestFlights.Count} рейсів.", "Успіх", MessageBoxButtons.OK, MessageBoxIcon.Information);
+        }
+        else
+        {
+            MessageBox.Show("На жаль, не знайдено рейсів із вільними місцями до вказаного пункту.", "Результат пошуку", MessageBoxButtons.OK, MessageBoxIcon.Information);
+            RefreshGrid(new List<Flight>());
+        }
+    }
 }
