@@ -33,6 +33,7 @@ public partial class MainForm : Form
         this.KeyPreview = true;
         this.KeyDown += MainForm_KeyDown;
         btnHelp.Click += (s, e) => ShowHelp();
+        this.FormClosing += MainForm_FormClosing;
 
         var pnlTop = new Panel { Dock = DockStyle.Top, Height = 50 };
 
@@ -114,6 +115,32 @@ public partial class MainForm : Form
         this.Controls.Add(dgvFlights);
         pnlTop.BringToFront();
         this.Controls.Add(pnlBottom);
+    }
+
+    private void MainForm_FormClosing(object? sender, FormClosingEventArgs e)
+    {
+        if (_flightService.HasUnsavedChanges)
+        {
+            var result = MessageBox.Show(
+                "Зберегти зміни перед виходом?",
+                "Підтвердження виходу",
+                MessageBoxButtons.YesNoCancel,
+                MessageBoxIcon.Warning);
+
+            if (result == DialogResult.Yes)
+            {
+                try { _flightService.SaveData(); }
+                catch (Exception ex)
+                {
+                    MessageBox.Show(ex.Message, "Помилка збереження", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                    e.Cancel = true;
+                }
+            }
+            else if (result == DialogResult.Cancel)
+            {
+                e.Cancel = true;
+            }
+        }
     }
 
     private void DgvFlights_DataBindingComplete(object? sender, DataGridViewBindingCompleteEventArgs e)
