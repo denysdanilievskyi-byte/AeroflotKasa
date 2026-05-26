@@ -9,6 +9,10 @@ public class FlightService
     private List<Flight> _flights = new();
 
     public bool HasUnsavedChanges { get; private set; } = false;
+    public FlightService()
+    {
+        LoadData();
+    }
     public IReadOnlyList<Flight> GetAllFlights() => _flights;
 
     public void AddFlight(Flight flight)
@@ -31,6 +35,15 @@ public class FlightService
     {
         _flights.Remove(flight);
         HasUnsavedChanges = true;
+    }
+    public List<Flight> FindNearestFlights(string destination)
+    {
+        return _flights
+            .Where(f => f.AvailableSeats > 0 &&
+                        (f.Route.Contains(destination, StringComparison.OrdinalIgnoreCase) ||
+                         f.IntermediateStops.Contains(destination, StringComparison.OrdinalIgnoreCase)))
+            .OrderBy(f => f.DepartureTime)
+            .ToList();
     }
     public void SaveData()
     {
