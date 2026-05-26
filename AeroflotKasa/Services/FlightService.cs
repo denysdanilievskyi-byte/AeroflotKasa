@@ -3,12 +3,23 @@ using AeroflotKasa.Models;
 
 namespace AeroflotKasa.Services;
 
+/// <summary>
+/// Сервіс для управління колекцією рейсів.
+/// Відповідає за додавання, редагування, видалення, пошук та збереження даних.
+/// </summary>
 public class FlightService
 {
     private readonly string _filePath = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "flights.json");
     private List<Flight> _flights = new();
 
+    /// <summary>
+    /// Вказує, чи є незбережені зміни в колекції.
+    /// </summary>
     public bool HasUnsavedChanges { get; private set; } = false;
+
+    /// <summary>
+    /// Ініціалізує новий екземпляр сервісу та завантажує дані.
+    /// </summary>
     public FlightService()
     {
         LoadData();
@@ -18,14 +29,24 @@ public class FlightService
             GenerateMockData();
         }
     }
+
+    /// <summary>
+    /// Повертає всі рейси.
+    /// </summary>
     public IReadOnlyList<Flight> GetAllFlights() => _flights;
 
+    /// <summary>
+    /// Додає новий рейс до колекції.
+    /// </summary>
     public void AddFlight(Flight flight)
     {
         _flights.Add(flight);
         HasUnsavedChanges = true;
     }
 
+    /// <summary>
+    /// Оновлює існуючий рейс.
+    /// </summary>
     public void UpdateFlight(Flight oldFlight, Flight newFlight)
     {
         var index = _flights.IndexOf(oldFlight);
@@ -36,11 +57,18 @@ public class FlightService
         }
     }
 
+    /// <summary>
+    /// Видаляє рейс із колекції.
+    /// </summary>
     public void DeleteFlight(Flight flight)
     {
         _flights.Remove(flight);
         HasUnsavedChanges = true;
     }
+
+    /// <summary>
+    /// Шукає найближчі рейси до вказаного пункту призначення з вільними місцями.
+    /// </summary>
     public List<Flight> FindNearestFlights(string destination)
     {
         return _flights
@@ -50,6 +78,10 @@ public class FlightService
             .OrderBy(f => f.DepartureTime)
             .ToList();
     }
+
+    /// <summary>
+    /// Бронює квитки та зберігає дані пасажира.
+    /// </summary>
     public bool BookTickets(Flight flight, Passenger passenger, int ticketCount)
     {
         if (flight.AvailableSeats >= ticketCount)
@@ -66,6 +98,7 @@ public class FlightService
         }
         return false;
     }
+
     private void GenerateMockData()
     {
         var random = new Random();
@@ -81,14 +114,17 @@ public class FlightService
 
         var generatedFlights = new List<Flight>();
 
-        for (int i = 0; i < 300; i++)
+        for (int i = 0; i < 10; i++)
         {
             var airline = airlines[random.Next(airlines.Length)];
             var flightNumber = $"{airline}-{random.Next(100, 9999)}-{i}";
 
             var from = cities[random.Next(cities.Length)];
             string to;
-            do { to = cities[random.Next(cities.Length)]; } while (from == to);
+            do
+            {
+                to = cities[random.Next(cities.Length)];
+            } while (from == to);
 
             var route = $"{from} - {to}";
 
@@ -96,7 +132,10 @@ public class FlightService
             if (random.NextDouble() < 0.4)
             {
                 string stop;
-                do { stop = cities[random.Next(cities.Length)]; } while (stop == from || stop == to);
+                do
+                {
+                    stop = cities[random.Next(cities.Length)];
+                } while (stop == from || stop == to);
                 intermediateStops = stop;
             }
 
@@ -120,21 +159,32 @@ public class FlightService
         }
 
         _flights = generatedFlights.OrderBy(f => f.DepartureTime).ToList();
-        SaveData();
-        HasUnsavedChanges = false;
-    }
-    public void SaveData()
-    {
+
         try
         {
-            var json = JsonSerializer.Serialize(_flights, new JsonSerializerOptions { WriteIndented = true });
-            File.WriteAllText(_filePath, json);
+            SaveData();
         }
-        catch (Exception ex)
+        catch (Exception)
         {
-            throw new Exception($"Не вдалося зберегти дані у файл {_filePath}. Деталі: {ex.Message}");
+            MessageBox.Show("Не вдалося зберегти згенеровані дані. Перевірте доступ до файлу.",
+                "Помилка збереження",
+                MessageBoxButtons.OK,
+                MessageBoxIcon.Warning);
         }
+
+        HasUnsavedChanges = false;
     }
+
+    /// <summary>
+    /// Зберігає колекцію рейсів у файл.
+    /// </summary>
+    public void SaveData()
+    {
+        var json = JsonSerializer.Serialize(_flights, new JsonSerializerOptions { WriteIndented = true });
+        File.WriteAllText(_filePath, json);
+        HasUnsavedChanges = false;
+    }
+
     private void LoadData()
     {
         if (File.Exists(_filePath))
@@ -154,5 +204,4 @@ public class FlightService
             }
         }
     }
-
 }
