@@ -32,4 +32,36 @@ public class FlightService
         _flights.Remove(flight);
         HasUnsavedChanges = true;
     }
+    public void SaveData()
+    {
+        try
+        {
+            var json = JsonSerializer.Serialize(_flights, new JsonSerializerOptions { WriteIndented = true });
+            File.WriteAllText(_filePath, json);
+        }
+        catch (Exception ex)
+        {
+            throw new Exception($"Не вдалося зберегти дані у файл {_filePath}. Деталі: {ex.Message}");
+        }
+    }
+    private void LoadData()
+    {
+        if (File.Exists(_filePath))
+        {
+            try
+            {
+                var json = File.ReadAllText(_filePath);
+                var data = JsonSerializer.Deserialize<List<Flight>>(json);
+                if (data != null)
+                {
+                    _flights = data;
+                }
+            }
+            catch
+            {
+                _flights = new List<Flight>();
+            }
+        }
+    }
+
 }
