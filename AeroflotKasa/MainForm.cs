@@ -31,6 +31,8 @@ public partial class MainForm : Form
         this.MinimumSize = new Size(800, 400);
         this.StartPosition = FormStartPosition.CenterScreen;
         this.KeyPreview = true;
+        this.KeyDown += MainForm_KeyDown;
+        btnHelp.Click += (s, e) => ShowHelp();
 
         var pnlTop = new Panel { Dock = DockStyle.Top, Height = 50 };
 
@@ -121,6 +123,28 @@ public partial class MainForm : Form
             row.HeaderCell.Value = (row.Index + 1).ToString();
         }
         dgvFlights.RowHeadersWidth = 65;
+    }
+
+    private void MainForm_KeyDown(object? sender, KeyEventArgs e)
+    {
+        if (e.KeyCode == Keys.F1)
+        {
+            ShowHelp();
+        }
+    }
+
+    private void ShowHelp()
+    {
+        MessageBox.Show(
+            "Програма 'Каса аерофлоту'.\n\n" +
+            "Гарячі клавіші:\n" +
+            "F1 - Довідка\n" +
+            "Enter - Підтвердити дію\n" +
+            "Esc - Скасувати/Закрити вікно\n" +
+            "Tab - Наступне поле\n" +
+            "Shift+Tab - Попереднє поле\n\n" +
+            "Використовуйте кнопки знизу для керування рейсами.",
+            "Довідка", MessageBoxButtons.OK, MessageBoxIcon.Information);
     }
     private void RefreshGrid(IEnumerable<Flight> flights)
     {
