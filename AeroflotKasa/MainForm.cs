@@ -4,6 +4,7 @@ namespace AeroflotKasa;
 
 public partial class MainForm : Form
 {
+    private DataGridView dgvFlights = new();
     private Button btnAdd = new();
     private Button btnEdit = new();
     private Button btnDelete = new();
@@ -79,6 +80,25 @@ public partial class MainForm : Form
         pnlBottom.Controls.Add(btnDelete);
         pnlBottom.Controls.Add(btnBook);
         pnlBottom.Controls.Add(btnHelp);
+
+        dgvFlights.Dock = DockStyle.Fill;
+        dgvFlights.AllowUserToAddRows = false;
+        dgvFlights.AllowUserToDeleteRows = false;
+        dgvFlights.ReadOnly = true;
+        dgvFlights.SelectionMode = DataGridViewSelectionMode.FullRowSelect;
+        dgvFlights.MultiSelect = false;
+        dgvFlights.AutoGenerateColumns = false;
+        dgvFlights.RowHeadersVisible = true;
+        dgvFlights.RowHeadersWidthSizeMode = DataGridViewRowHeadersWidthSizeMode.DisableResizing;
+        dgvFlights.RowHeadersDefaultCellStyle.Alignment = DataGridViewContentAlignment.MiddleCenter;
+        dgvFlights.TabIndex = 8;
+        dgvFlights.AutoSizeColumnsMode = DataGridViewAutoSizeColumnsMode.Fill;
+        dgvFlights.RowTemplate.MinimumHeight = 35;
+        dgvFlights.ColumnHeadersHeightSizeMode = DataGridViewColumnHeadersHeightSizeMode.DisableResizing;
+        dgvFlights.ColumnHeadersHeight = 40;
+
+        this.Controls.Add(dgvFlights);
+        pnlTop.BringToFront();
 
         this.Controls.Add(pnlBottom);
     }
