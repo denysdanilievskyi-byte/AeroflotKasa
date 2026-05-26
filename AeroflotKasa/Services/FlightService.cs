@@ -45,6 +45,22 @@ public class FlightService
             .OrderBy(f => f.DepartureTime)
             .ToList();
     }
+    public bool BookTickets(Flight flight, Passenger passenger, int ticketCount)
+    {
+        if (flight.AvailableSeats >= ticketCount)
+        {
+            flight.AvailableSeats -= ticketCount;
+
+            for (int i = 0; i < ticketCount; i++)
+            {
+                flight.Passengers.Add(passenger);
+            }
+
+            HasUnsavedChanges = true;
+            return true;
+        }
+        return false;
+    }
     public void SaveData()
     {
         try
