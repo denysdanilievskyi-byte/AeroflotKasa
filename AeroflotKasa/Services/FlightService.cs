@@ -12,6 +12,11 @@ public class FlightService
     public FlightService()
     {
         LoadData();
+
+        if (!_flights.Any())
+        {
+            GenerateMockData();
+        }
     }
     public IReadOnlyList<Flight> GetAllFlights() => _flights;
 
