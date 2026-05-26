@@ -75,6 +75,48 @@ public class FlightService
         var daysOptions = new[] { "Пн, Ср, Пт", "Вт, Чт, Сб", "Щодня", "Сб, Нд", "Пн, Чт", "Ср, Нд" };
 
         var generatedFlights = new List<Flight>();
+
+        for (int i = 0; i < 300; i++)
+        {
+            var airline = airlines[random.Next(airlines.Length)];
+            var flightNumber = $"{airline}-{random.Next(100, 9999)}-{i}";
+
+            var from = cities[random.Next(cities.Length)];
+            string to;
+            do { to = cities[random.Next(cities.Length)]; } while (from == to);
+
+            var route = $"{from} - {to}";
+
+            var intermediateStops = string.Empty;
+            if (random.NextDouble() < 0.4)
+            {
+                string stop;
+                do { stop = cities[random.Next(cities.Length)]; } while (stop == from || stop == to);
+                intermediateStops = stop;
+            }
+
+            var daysOffset = random.Next(1, 60);
+            var hours = random.Next(0, 24);
+            var minutes = random.Next(0, 12) * 5;
+            var departureTime = DateTime.Today.AddDays(daysOffset).AddHours(hours).AddMinutes(minutes);
+
+            var days = daysOptions[random.Next(daysOptions.Length)];
+            var seats = random.Next(0, 350);
+
+            generatedFlights.Add(new Flight
+            {
+                FlightNumber = flightNumber,
+                Route = route,
+                IntermediateStops = intermediateStops,
+                DepartureTime = departureTime,
+                FlightDays = days,
+                AvailableSeats = seats
+            });
+        }
+
+        _flights = generatedFlights.OrderBy(f => f.DepartureTime).ToList();
+        SaveData();
+        HasUnsavedChanges = false;
     }
     public void SaveData()
     {
