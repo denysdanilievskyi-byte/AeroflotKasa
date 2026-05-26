@@ -143,6 +143,23 @@ public partial class MainForm : Form
         }
     }
 
+    private void BtnDelete_Click(object? sender, EventArgs e)
+    {
+        if (dgvFlights.CurrentRow?.DataBoundItem is Flight selectedFlight)
+        {
+            var result = MessageBox.Show($"Ви дійсно бажаєте видалити рейс {selectedFlight.FlightNumber}?", "Підтвердження", MessageBoxButtons.YesNo, MessageBoxIcon.Warning);
+            if (result == DialogResult.Yes)
+            {
+                try
+                {
+                    _flightService.DeleteFlight(selectedFlight);
+                    RefreshGrid(_flightService.GetAllFlights());
+                }
+                catch (Exception ex) { MessageBox.Show(ex.Message, "Помилка", MessageBoxButtons.OK, MessageBoxIcon.Error); }
+            }
+        }
+        else MessageBox.Show("Будь ласка, оберіть рейс.", "Увага", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+    }
     private void DgvFlights_DataBindingComplete(object? sender, DataGridViewBindingCompleteEventArgs e)
     {
         foreach (DataGridViewRow row in dgvFlights.Rows)
