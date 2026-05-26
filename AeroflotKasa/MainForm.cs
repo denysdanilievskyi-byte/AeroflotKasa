@@ -1,4 +1,5 @@
 using AeroflotKasa.Services;
+using AeroflotKasa.Models;
 
 namespace AeroflotKasa;
 
@@ -19,6 +20,8 @@ public partial class MainForm : Form
     {
         _flightService = new FlightService();
         InitializeComponentCustom();
+
+        RefreshGrid(_flightService.GetAllFlights());
     }
 
     private void InitializeComponentCustom()
@@ -97,9 +100,21 @@ public partial class MainForm : Form
         dgvFlights.ColumnHeadersHeightSizeMode = DataGridViewColumnHeadersHeightSizeMode.DisableResizing;
         dgvFlights.ColumnHeadersHeight = 40;
 
+        dgvFlights.Columns.Add(new DataGridViewTextBoxColumn { DataPropertyName = "FlightNumber", HeaderText = "Номер рейсу", FillWeight = 15, MinimumWidth = 80 });
+        dgvFlights.Columns.Add(new DataGridViewTextBoxColumn { DataPropertyName = "Route", HeaderText = "Маршрут", FillWeight = 25, MinimumWidth = 150 });
+        dgvFlights.Columns.Add(new DataGridViewTextBoxColumn { DataPropertyName = "IntermediateStops", HeaderText = "Проміжні посадки", FillWeight = 20, MinimumWidth = 120 });
+        dgvFlights.Columns.Add(new DataGridViewTextBoxColumn { DataPropertyName = "DepartureTime", HeaderText = "Час відправлення", FillWeight = 15, MinimumWidth = 110, DefaultCellStyle = new DataGridViewCellStyle { Format = "dd.MM.yyyy HH:mm" } });
+        dgvFlights.Columns.Add(new DataGridViewTextBoxColumn { DataPropertyName = "FlightDays", HeaderText = "Дні польоту", FillWeight = 15, MinimumWidth = 100 });
+        dgvFlights.Columns.Add(new DataGridViewTextBoxColumn { DataPropertyName = "AvailableSeats", HeaderText = "Вільні місця", FillWeight = 10, MinimumWidth = 80 });
+
         this.Controls.Add(dgvFlights);
         pnlTop.BringToFront();
 
         this.Controls.Add(pnlBottom);
+    }
+    private void RefreshGrid(IEnumerable<Flight> flights)
+    {
+        dgvFlights.DataSource = null;
+        dgvFlights.DataSource = flights.ToList();
     }
 }
