@@ -5,6 +5,7 @@ namespace AeroflotKasa.Services;
 
 public class FlightService
 {
+    private readonly string _filePath = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "flights.json");
     private List<Flight> _flights = new();
 
     public IReadOnlyList<Flight> GetAllFlights() => _flights;
@@ -21,5 +22,10 @@ public class FlightService
         {
             _flights[index] = newFlight;
         }
+    }
+
+    public void DeleteFlight(Flight flight)
+    {
+        _flights.Remove(flight);
     }
 }
