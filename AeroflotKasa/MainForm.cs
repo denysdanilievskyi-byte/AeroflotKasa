@@ -4,6 +4,12 @@ namespace AeroflotKasa;
 
 public partial class MainForm : Form
 {
+    private Button btnAdd = new();
+    private Button btnEdit = new();
+    private Button btnDelete = new();
+    private Button btnBook = new();
+    private Button btnHelp = new();
+
     private readonly FlightService _flightService;
     private TextBox txtSearch = new();
     private Button btnSearch = new();
@@ -43,5 +49,37 @@ public partial class MainForm : Form
         pnlTop.Controls.Add(btnClear);
 
         this.Controls.Add(pnlTop);
+
+        var pnlBottom = new Panel { Dock = DockStyle.Bottom, Height = 60 };
+
+        btnAdd.Text = "Додати";
+        btnAdd.Location = new Point(10, 10);
+        btnAdd.TabIndex = 3;
+
+        btnEdit.Text = "Редагувати";
+        btnEdit.Location = new Point(90, 10);
+        btnEdit.TabIndex = 4;
+
+        btnDelete.Text = "Видалити";
+        btnDelete.Location = new Point(170, 10);
+        btnDelete.TabIndex = 5;
+
+        btnBook.Text = "Оформити квиток";
+        btnBook.Location = new Point(250, 10);
+        btnBook.Size = new Size(120, 25);
+        btnBook.TabIndex = 6;
+
+        btnHelp.Text = "Довідка (F1)";
+        btnHelp.Location = new Point(750, 10);
+        btnHelp.Anchor = AnchorStyles.Top | AnchorStyles.Right;
+        btnHelp.TabIndex = 7;
+
+        pnlBottom.Controls.Add(btnAdd);
+        pnlBottom.Controls.Add(btnEdit);
+        pnlBottom.Controls.Add(btnDelete);
+        pnlBottom.Controls.Add(btnBook);
+        pnlBottom.Controls.Add(btnHelp);
+
+        this.Controls.Add(pnlBottom);
     }
 }
