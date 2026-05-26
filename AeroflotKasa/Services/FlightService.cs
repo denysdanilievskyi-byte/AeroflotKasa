@@ -61,6 +61,21 @@ public class FlightService
         }
         return false;
     }
+    private void GenerateMockData()
+    {
+        var random = new Random();
+
+        var airlines = new[] { "PS", "LO", "LH", "AF", "BA", "TK", "UA", "AA", "DL", "EK", "QR", "SQ" };
+        var cities = new[]
+        {
+            "Київ", "Варшава", "Лондон", "Париж", "Берлін", "Рим", "Мадрид", "Амстердам",
+            "Нью-Йорк", "Лос-Анджелес", "Чикаго", "Маямі", "Торонто",
+            "Токіо", "Пекін", "Сеул", "Бангкок", "Сінгапур", "Дубай", "Доха"
+        };
+        var daysOptions = new[] { "Пн, Ср, Пт", "Вт, Чт, Сб", "Щодня", "Сб, Нд", "Пн, Чт", "Ср, Нд" };
+
+        var generatedFlights = new List<Flight>();
+    }
     public void SaveData()
     {
         try
