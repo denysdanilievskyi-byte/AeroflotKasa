@@ -107,10 +107,20 @@ public partial class MainForm : Form
         dgvFlights.Columns.Add(new DataGridViewTextBoxColumn { DataPropertyName = "FlightDays", HeaderText = "Дні польоту", FillWeight = 15, MinimumWidth = 100 });
         dgvFlights.Columns.Add(new DataGridViewTextBoxColumn { DataPropertyName = "AvailableSeats", HeaderText = "Вільні місця", FillWeight = 10, MinimumWidth = 80 });
 
+        dgvFlights.DataBindingComplete += DgvFlights_DataBindingComplete;
+
         this.Controls.Add(dgvFlights);
         pnlTop.BringToFront();
-
         this.Controls.Add(pnlBottom);
+    }
+
+    private void DgvFlights_DataBindingComplete(object? sender, DataGridViewBindingCompleteEventArgs e)
+    {
+        foreach (DataGridViewRow row in dgvFlights.Rows)
+        {
+            row.HeaderCell.Value = (row.Index + 1).ToString();
+        }
+        dgvFlights.RowHeadersWidth = 65;
     }
     private void RefreshGrid(IEnumerable<Flight> flights)
     {
