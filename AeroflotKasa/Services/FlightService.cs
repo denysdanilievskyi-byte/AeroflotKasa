@@ -114,7 +114,7 @@ public class FlightService
 
         var generatedFlights = new List<Flight>();
 
-        for (int i = 0; i < 1000; i++)
+        for (int i = 0; i < 10; i++)
         {
             var airline = airlines[random.Next(airlines.Length)];
             var flightNumber = $"{airline}-{random.Next(100, 9999)}-{i}";
