@@ -9,14 +9,12 @@ public class BookingForm : Form
 {
     private TextBox txtFullName = new();
     private TextBox txtPassportData = new();
-    private NumericUpDown numTickets = new();
+    private TextBox txtTickets = new();
     private Button btnConfirm = new();
     private Button btnCancel = new();
 
-    /// <summary>
-    /// Кількість квитків, яку обрав користувач для бронювання.
-    /// </summary>
-    public int TicketCount => (int)numTickets.Value;
+    private readonly Flight _currentFlight;
+    public int TicketCount { get; private set; }
 
     /// <summary>
     /// Дані пасажира, на якого оформлюються квитки.
@@ -29,6 +27,7 @@ public class BookingForm : Form
     /// <param name="flight">Об'єкт рейсу, на який оформлюються квитки.</param>
     public BookingForm(Flight flight)
     {
+        _currentFlight = flight;
         InitializeComponent(flight);
     }
 
@@ -60,11 +59,10 @@ public class BookingForm : Form
         txtPassportData.TabIndex = 1;
 
         var lblTickets = new Label { Text = "Кількість квитків:", Location = new Point(10, 135), AutoSize = true };
-        numTickets.Location = new Point(130, 130);
-        numTickets.Size = new Size(180, 25);
-        numTickets.Minimum = 1;
-        numTickets.Maximum = flight.AvailableSeats > 0 ? flight.AvailableSeats : 1;
-        numTickets.TabIndex = 2;
+        txtTickets.Location = new Point(130, 130);
+        txtTickets.Size = new Size(180, 25);
+        txtTickets.Text = "1";
+        txtTickets.TabIndex = 2;
 
         btnConfirm.Text = "Узгодити та Підтвердити";
         btnConfirm.Location = new Point(80, 190);
@@ -84,7 +82,7 @@ public class BookingForm : Form
         this.Controls.Add(lblPassport);
         this.Controls.Add(txtPassportData);
         this.Controls.Add(lblTickets);
-        this.Controls.Add(numTickets);
+        this.Controls.Add(txtTickets);
         this.Controls.Add(btnConfirm);
         this.Controls.Add(btnCancel);
 
@@ -109,19 +107,32 @@ public class BookingForm : Form
             return;
         }
 
-        if (numTickets.Value <= 0)
+        if (!int.TryParse(txtTickets.Text, out int parsedTickets))
         {
-            MessageBox.Show("Оберіть кількість квитків більше нуля.", "Помилка", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+            MessageBox.Show("Будь ласка, введіть коректне число для кількості квитків.", "Помилка", MessageBoxButtons.OK, MessageBoxIcon.Warning);
             return;
         }
 
+        if (parsedTickets <= 0)
+        {
+            MessageBox.Show("Кількість квитків повинна бути більше нуля.", "Помилка", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+            return;
+        }
+
+        if (parsedTickets > _currentFlight.AvailableSeats)
+        {
+            MessageBox.Show($"Неможливо оформити {parsedTickets} квитків. На рейсі залишилося лише {_currentFlight.AvailableSeats} вільних місць.", "Перевищення ліміту", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+            return;
+        }
+
+        TicketCount = parsedTickets;
         PassengerInfo.FullName = txtFullName.Text.Trim();
         PassengerInfo.PassportData = txtPassportData.Text.Trim();
 
         var confirmResult = MessageBox.Show(
             $"Пасажир: {PassengerInfo.FullName}\n" +
             $"Документ: {PassengerInfo.PassportData}\n" +
-            $"Кількість квитків: {numTickets.Value}\n\n" +
+            $"Кількість квитків: {TicketCount}\n\n" +
             $"Ви погоджуєте оформлення та списування місць?",
             "Узгодження з пасажиром",
             MessageBoxButtons.YesNo,

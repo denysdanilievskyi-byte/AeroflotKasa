@@ -140,7 +140,6 @@ public class FlightForm : Form
             DepartureTime = dtpDeparture.Value,
             FlightDays = txtDays.Text.Trim(),
             AvailableSeats = (int)numSeats.Value,
-            // ВИПРАВЛЕННЯ: Відновлюємо список пасажирів, якщо це режим редагування
             Passengers = _originalFlight != null ? _originalFlight.Passengers : new List<Passenger>()
         };
 
